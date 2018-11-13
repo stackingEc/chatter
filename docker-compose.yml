@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+#  nginx:
+#        build: ./deploy/
+#        hostname: nginx
+#        container_name: nginx
+#        volumes:
+#            - /home/centos/tls:/etc/tls
+#        networks:
+#            - servernet
+#        ports:
+#            - 80:80
+#            - 443:443
+  db:
+    image: postgres:latest
+    restart: always
+    hostname: db
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=Admin14801612
+      - POSTGRES_DB=chat
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  web:
+    hostname: web
+    build: .
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/chat
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
+
