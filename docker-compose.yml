@@ -33,18 +33,12 @@ services:
       - ./data/mongo:/var/lib/mongo
 
   rabbitmq:
-    image: rabbitmq:latest
     restart: always
     hostname: rabbitmq
+    build: deploy/rabbitmq
     ports:
       - "15672:15672"
       - "5672:5672"
-    environment:
-      - HOST_PORT_RABBIT=5672
-      - HOST_PORT_RABBIT_MGMT=15672
-      - RABBITMQ_DEFAULT_USER=rabbitmq
-      - RABBITMQ_DEFAULT_PASS=rabbitmq
-      - HOST_PATH_RABBIT_DATADIR=./data/rabbitmq
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq
 

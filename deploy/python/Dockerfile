@@ -4,4 +4,3 @@
  WORKDIR /chat
  RUN git clone https://github.com/defStacker/chat.git .
  RUN pip install -r requirements.txt
- ADD . /chat/
