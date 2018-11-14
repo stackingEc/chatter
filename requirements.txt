@@ -6,8 +6,7 @@ psycopg2-binary
 pandas
 pika
 gunicorn
-docker-compose
-
+pipenv
 
 
 

@@ -53,3 +53,6 @@ Iamtheone1?
 ```
 
 https://jee-appy.blogspot.com/2017/01/deply-django-with-nginx.html
+
+# RUN python manage.py collectstatic
+# CMD ["gunicorn", "--chdir", "hello", "--bind", ":8000", "hello.wsgi:application"]

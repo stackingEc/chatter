@@ -2,20 +2,19 @@ version: '3'
 
 services:
 #  nginx:
-#        build: ./deploy/
-#        hostname: nginx
-#        container_name: nginx
-#        volumes:
-#            - /home/centos/tls:/etc/tls
-#        networks:
-#            - servernet
-#        ports:
-#            - 80:80
-#            - 443:443
-  db:
+#    image: nginx:latest
+#    hostname: nginx
+#    ports:
+#      - "8080:80"
+#    environment:
+#      - NGINX_HOST=foobar.com
+#      - NGINX_PORT=80
+#    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+  psql:
     image: postgres:latest
     restart: always
-    hostname: db
+    hostname: psql
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=Admin14801612
@@ -23,16 +22,34 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
-  web:
-    hostname: web
-    build: .
-    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+  mongo:
+    image: mongo:latest
+    restart: always
+    hostname: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: admin
+
+  rabbitmq:
+    image: rabbitmq:latest
+    restart: always
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+
+
+  django:
+    hostname: django
+    build: deploy/python/
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/chat
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - psql
     links:
-      - db
+      - psql
 

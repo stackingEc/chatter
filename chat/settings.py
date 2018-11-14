@@ -84,7 +84,7 @@ DATABASES = {
         'NAME': 'chat',
         'USER': 'root',
         'PASSWORD': 'Admin14801612',
-        'HOST': 'db',
+        'HOST': 'psql',
         'PORT': '5432',
     }
 }
