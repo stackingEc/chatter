@@ -27,29 +27,41 @@ services:
     restart: always
     hostname: mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: admin
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - ./data/mongo:/var/lib/mongo
 
   rabbitmq:
     image: rabbitmq:latest
     restart: always
     hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
     environment:
-      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-      RABBITMQ_DEFAULT_USER: rabbitmq
-      RABBITMQ_DEFAULT_PASS: rabbitmq
-
+      - HOST_PORT_RABBIT=5672
+      - HOST_PORT_RABBIT_MGMT=15672
+      - RABBITMQ_DEFAULT_USER=rabbitmq
+      - RABBITMQ_DEFAULT_PASS=rabbitmq
+      - HOST_PATH_RABBIT_DATADIR=./data/rabbitmq
+    volumes:
+      - ./data/rabbitmq:/var/lib/rabbitmq
 
   django:
     hostname: django
     build: deploy/python/
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/chat
     ports:
       - "8000:8000"
     depends_on:
       - psql
+      - mongo
+      - rabbitmq
     links:
       - psql
+      - mongo
+      - rabbitmq
 
