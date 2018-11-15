@@ -51,8 +51,4 @@ Password  for both
 ```
 Iamtheone1?
 ```
-
-https://jee-appy.blogspot.com/2017/01/deply-django-with-nginx.html
-
-# RUN python manage.py collectstatic
-# CMD ["gunicorn", "--chdir", "hello", "--bind", ":8000", "hello.wsgi:application"]
+https://gist.github.com/defStacker/72300588be94e9701b26faaaaf813049
