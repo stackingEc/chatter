@@ -2,5 +2,5 @@
  ENV PYTHONUNBUFFERED 1
  RUN mkdir /chat
  WORKDIR /chat
- RUN git clone https://github.com/defStacker/chat.git .
+ RUN git clone https://github.com/stackingEc/chatter.git .
  RUN pip install -r requirements.txt
