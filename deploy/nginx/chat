@@ -30,9 +30,9 @@ server {
         }
 
         location /static/ {
-                root ~/chat/static;
+                root /opt/services/chat/static;
         }
         location /media/ {
-                root ~/chat/media;
+                root /opt/services/chat/media;
     }
 }
