@@ -1,7 +1,7 @@
  FROM python:3.5
  ENV PYTHONUNBUFFERED 1
- RUN mkdir /opt/services/chat
- WORKDIR /opt/services/chat
+ RUN mkdir /chat
+ WORKDIR /chat
  RUN git clone https://github.com/stackingEc/chatter.git .
  RUN pip install -r requirements.txt
  RUN cd deploy/python && pipenv install --system

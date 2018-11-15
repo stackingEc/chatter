@@ -1,6 +1,27 @@
 version: '3'
 
 services:
+  django:
+    hostname: django
+    build: deploy/python/
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/chat
+      - static_volume:/chat/static
+      - media_volume:/chat/media
+    networks:
+      - nginx_network
+    ports:
+      - "8000:8000"
+    depends_on:
+      - psql
+      - mongo
+      - rabbitmq
+    links:
+      - psql
+      - mongo
+      - rabbitmq
+
   nginx:
     image: nginx:latest
     hostname: nginx
@@ -10,8 +31,6 @@ services:
       - ./deploy/nginx/chat:/etc/nginx/sites-available/chat
     command: bash -c "cd /etc/nginx/sites-enabled/chat && ln -s /etc/nginx/sites-available/chat "
     depends_on:
-      - django
-    links:
       - django
     networks:
       - nginx_network
@@ -55,26 +74,7 @@ services:
       - "15672:15672"
       - "25672:25672"
 
-  django:
-    hostname: django
-    build: deploy/python/
-    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - .:/opt/services/chat
-      - static_volume:/opt/services/chat/static
-      - media_volume:/opt/services/chat/media
-    networks:
-      - nginx_network
-    ports:
-      - "8000:8000"
-    depends_on:
-      - psql
-      - mongo
-      - rabbitmq
-    links:
-      - psql
-      - mongo
-      - rabbitmq
+
 
 networks:
   nginx_network:
