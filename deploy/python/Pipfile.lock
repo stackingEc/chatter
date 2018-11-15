@@ -10,6 +10,6 @@ gunicorn = "*"
 
 
 [requires]
-# our Dockerfile is based on Python 3.5
-python_version = "3.5"
+# our Dockerfile is based on Python 3.6
+python_version = "3.6"
 
