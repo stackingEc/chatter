@@ -1,15 +1,15 @@
 upstream chat {
-        server 8000;
+        server django:8000;
 }
 
 server {
         listen 8000;
-        server_name www.su-techbian.com;
+        server_name 127.0.0.1;
         access_log /var/log/nginx/chat.log;
         error_log /var/log/nginx/chat.error.log;
 
         location / {
-                proxy_pass http://www.su-techbian.com;
+                proxy_pass http://chat;
                 proxy_redirect  off;
 
                 proxy_set_header        Host            $http_host;
@@ -30,6 +30,9 @@ server {
         }
 
         location /static/ {
-                root /home/andrews/chatter/static;
+                root ~/chat/static;
         }
+        location /media/ {
+                root ~/chat/media;
+    }
 }

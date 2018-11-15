@@ -6,10 +6,15 @@ services:
     hostname: nginx
     ports:
       - "8080:80"
-    environment:
-      - NGINX_HOST=foobar.com
-      - NGINX_PORT=80
-    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+    volumes:
+      - ./deploy/nginx/chat:/etc/nginx/sites-available/chat
+    command: bash -c "cd /etc/nginx/sites-enabled/chat && ln -s /etc/nginx/sites-available/chat "
+    depends_on:
+      - django
+    links:
+      - django
+    networks:
+      - nginx_network
 
   psql:
     image: postgres:latest
@@ -40,8 +45,8 @@ services:
       RABBITMQ_ERLANG_COOKIE: "secret string"
       RABBITMQ_NODENAME: rabbit
     volumes:
-      - "./deploy/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config"
-      - "./deploy/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json"
+      - ./deploy/rabbitmq/rabbitmq.config:/etc/rabbitmq/rabbitmq.config
+      - ./deploy/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
     ports:
       - "4369:4369"
       - "5671:5671"
@@ -55,7 +60,11 @@ services:
     build: deploy/python/
     command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/chat
+      - .:/opt/services/chat
+      - static_volume:/opt/services/chat/static
+      - media_volume:/opt/services/chat/media
+    networks:
+      - nginx_network
     ports:
       - "8000:8000"
     depends_on:
@@ -67,3 +76,12 @@ services:
       - mongo
       - rabbitmq
 
+networks:
+  nginx_network:
+    driver: bridge
+
+
+volumes:
+  database1_volume:
+  static_volume:
+  media_volume:
